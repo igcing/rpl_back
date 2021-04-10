@@ -21,8 +21,10 @@ async function createSchema(){
 } 
 
 async function createTableBanco(){
-    await db.query("CREATE TABLE IF NOT EXISTS public.banco( id_banco integer NOT NULL, nombre_banco character varying(100) NOT NULL, code_banco character varying(10) NOT NULL, CONSTRAINT banco_pkey PRIMARY KEY (id_banco), CONSTRAINT uk_code_banco UNIQUE (code_banco));");
+    await db.query("CREATE TABLE IF NOT EXISTS public.banco( id_banco integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9999999 CACHE 1 ), "+
+                    " nombre_banco character varying(100) NOT NULL, code_banco character varying(10) NOT NULL, CONSTRAINT banco_pkey PRIMARY KEY (id_banco), CONSTRAINT uk_code_banco UNIQUE (code_banco));");
 }
+
 
 async function createTableTipoCuenta(){
     await db.query("CREATE TABLE IF NOT EXISTS public.tipo_cuenta(id_cuenta integer NOT NULL,nombre_cuenta character varying(50) NOT NULL, CONSTRAINT tipo_cuenta_pkey PRIMARY KEY (id_cuenta));")
