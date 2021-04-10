@@ -8,14 +8,9 @@ const routesTransferencia = require('./controller/transferenciaController');
 global.db = require('./dao/postgres').getDB();
 
 express()
-  //.use(express.static(path.join(__dirname, 'public')))
-  //.set('views', path.join(__dirname, 'views'))
-  //.set('view engine', 'ejs')
-  //.get('/', (req, res) => res.render('pages/index'))
   .use(bodyParser.json())
   .use(routesDestinatario.createDestinatario)
   .use(routesTransferencia.createTransferencia)
   .use(routesTransferencia.getTransferencias)
-  .get('/helloWorld',(req,res) => { res.send('hello world!')} )
-  //.get('/getBank',  routesBank.getBank)
+  .get('/init', async (req,res) => { res.send( await routesInit.initDB()) ; })
   .listen(PORT, () => {routesInit.initDB() ; console.log(`Listening on ${ PORT }`);})

@@ -1,23 +1,15 @@
 
 async function init(){
     /* CREATE SCHEMA */
-    createSchema();
-    createTableBanco();
-    createTableTipoCuenta();
-    creatTableTransferencia();
-    createTablePersona();
+    await createSchema();
+    await createTableBanco();
+    await createTableTipoCuenta();
+    await creatTableTransferencia();
+    await createTablePersona();
     /* INSERT BASIC DATA */
-    insertTipoCuenta();
-  //  insertFirstClient();
+    await insertTipoCuenta();
     return {result: 'ok'};
 }
-
-/*
-async function insertFirstClient(){
-    let query = "INSERT INTO public.persona(rut_persona, nombre_persona, telefono_persona, numero_cuenta, id_tipo_cuenta, is_destinatario)"+
-    "VALUES ('170233824', 'IVAN CUEVAS I', '951376441', '99999999', 1, false);";
-    await db.query(query).catch(err => {});
-}*/
 
 async function insertTipoCuenta(){
     let query = "INSERT INTO public.tipo_cuenta( id_cuenta, nombre_cuenta) VALUES (1, 'CUENTA CORRIENTE'),(2, 'CUENTA VISTA');";
