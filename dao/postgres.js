@@ -10,7 +10,7 @@ var pool = {
   };
 
 function getDB() {
-  console.log(pool);
+  console.log(pool); 
     return pgp(pool);
 }
 
