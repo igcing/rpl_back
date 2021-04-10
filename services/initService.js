@@ -4,8 +4,8 @@ async function init(){
     await createSchema();
     await createTableBanco();
     await createTableTipoCuenta();
-    await creatTableTransferencia();
     await createTablePersona();
+    await creatTableTransferencia();
     /* INSERT BASIC DATA */
     await insertTipoCuenta();
     return {result: 'ok'};
