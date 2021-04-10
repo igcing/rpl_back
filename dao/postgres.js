@@ -7,7 +7,12 @@ var pool = {
     database: conf.postgres.database,
     password: conf.postgres.password,
     port: conf.postgres.port,
-    ssl: conf.postgres.ssl
+    ssl: conf.postgres.ssl,
+    extra: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    }
   };
 
 function getDB() {
