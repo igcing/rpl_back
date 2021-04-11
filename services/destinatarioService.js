@@ -6,23 +6,28 @@ const bancoService = require('../services/bancoService');
  * @returns listado de personas
  */
 async function getDestinatarios(filters){
-    let where = "WHERE 1=1 ";
+        let where = "WHERE 1=1 ";
     
-    if(filters && filters.rut_persona)
-        where += "AND  rut_persona = '"+filters.rut_persona+"' ";
-    if(filters && filters.nombre_persona)
-        where += "AND  nombre_persona LIKE '%"+filters.nombre_persona+"%' ";
-    if(filters && filters.tipo_cuenta){
-        where += "AND  id_tipo_cuenta = "+filters.tipo_cuenta;
-    }
-    if(filters && filters.code_banco){
-        const resultsBco = await bancoService.getBanco(filters.code_banco);
-        where += "AND  id_banco = "+resultsBco[0].id_banco;
-    }
+        if(filters && filters.rut_persona)
+            where += " AND  p.rut_persona = '"+filters.rut_persona+"' ";
+        if(filters && filters.nombre_persona)
+            where += " AND  p.nombre_persona LIKE '%"+filters.nombre_persona+"%' ";
+        if(filters && filters.tipo_cuenta)
+            where += " AND  p.id_tipo_cuenta = "+filters.tipo_cuenta;
+        if(filters && filters.numero_cuenta)
+            where += " AND  p.numero_cuenta = '"+filters.numero_cuenta+"'";
+        if(filters && filters.code_banco){
+            const resultsBco = await bancoService.getBanco(filters.code_banco);
+            where += " AND  p.id_banco = "+resultsBco[0].id_banco;
+        }
 
-    let query = 'SELECT * FROM public.persona ' + where;
-    let result = await db.query(query);
-    return result;
+        let query = 'select p.id_persona, p.rut_persona, p.nombre_persona, p.telefono_persona,p.numero_cuenta, p.email_persona, '+
+        ' tc.id_cuenta, tc.nombre_cuenta as tipo_cuenta, b.code_banco, b.nombre_banco'+
+        ' from persona p'+
+        ' join tipo_cuenta tc on tc.id_cuenta = p.id_tipo_cuenta'+
+        ' join banco b on b.id_banco = p.id_banco ' + where;
+        let result = await db.query(query).catch( (error) => { throw(error) });
+        return result;
 }
 
 /**
@@ -35,13 +40,13 @@ async function getDestinatarios(filters){
  * @param {boolean - si es destinatario} isDestinatario 
  * @returns 
  */
-async function createDestinatario(rut, nombre, telefono, numero_cuenta, tipo_cuenta, data_banco){
-    const id_bco = await bancoService.createBanco(data_banco);
-    let query = 'INSERT INTO public.persona(rut_persona, nombre_persona, telefono_persona, numero_cuenta, id_tipo_cuenta, id_banco)'+
-    'VALUES ('+rut+', \''+nombre+'\', \''+telefono+'\', \''+numero_cuenta+'\', '+tipo_cuenta+', '+id_bco+');';
-  
-    let result = await db.query(query).then( function (res){console.log(res);});
-    return result;
+async function createDestinatario(rut, nombre, telefono, numero_cuenta, tipo_cuenta, email, code_banco, nombre_banco){
+    const id_bco = await bancoService.createBanco(code_banco, nombre_banco);
+    let query = 'INSERT INTO public.persona(rut_persona, nombre_persona, telefono_persona, numero_cuenta, id_tipo_cuenta, email_persona, id_banco)'+
+    'VALUES ('+rut+', \''+nombre+'\', \''+telefono+'\', \''+numero_cuenta+'\', '+tipo_cuenta+',\''+email+'\', '+id_bco+');';
+    await db.query(query).catch( (error) => { throw(error) });
+    let search = await getDestinatarios({rut_persona:rut, tipo_cuenta: tipo_cuenta, code_banco: code_banco, nombre_banco: nombre_banco})
+    return search;
 }
 
 module.exports = {getDestinatarios, createDestinatario}

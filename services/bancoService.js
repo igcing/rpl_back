@@ -3,12 +3,12 @@
  * @param {code_banco, nombre_banco} data_banco 
  * @returns id_banco
  */
-async function createBanco(data_banco){
-    let data_banco_founded = await getBanco(data_banco.code_banco);
-    if(!data_banco_founded || data_banco_founded.length==0){
-        let query = "INSERT INTO public.banco(code_banco, nombre_banco) VALUES ( '"+data_banco.code_banco+"', '"+data_banco.nombre_banco+"'); ";
-        await db.query(query);
-        data_banco_founded = await getBanco(data_banco.code_banco);
+async function createBanco(code_banco, nombre_banco){
+    let data_banco_founded = await getBanco(code_banco);
+    if(data_banco_founded.length==0){
+        let query = "INSERT INTO public.banco(code_banco, nombre_banco) VALUES ( '"+code_banco+"', '"+nombre_banco+"'); ";
+        await db.query(query).catch( (error) => { throw(error) });
+        data_banco_founded = await getBanco(code_banco);
     }
     return data_banco_founded[0].id_banco;
 }
@@ -19,9 +19,8 @@ async function createBanco(data_banco){
  * @returns id_banco, code_banco, nombre_banco
  */
 async function getBanco(code_banco){
-    let query  = "SELECT * FROM public.banco WHERE code_banco ='"+code_banco+"'";
-    const result = await db.query(query);
-    return result;
+    let query  = "select * from banco where code_banco ='"+code_banco+"'";
+    return await db.query(query).catch( (error) => { throw(error) });
 }
 
 module.exports = {createBanco , getBanco}
