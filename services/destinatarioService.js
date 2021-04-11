@@ -11,7 +11,7 @@ async function getDestinatarios(filters){
         if(filters && filters.rut_persona)
             where += " AND  p.rut_persona = '"+filters.rut_persona+"' ";
         if(filters && filters.nombre_persona)
-            where += " AND  p.nombre_persona LIKE '%"+filters.nombre_persona+"%' ";
+            where += " AND  UPPER(p.nombre_persona) LIKE UPPER('%"+filters.nombre_persona.toUpperCase()+"%') ";
         if(filters && filters.tipo_cuenta)
             where += " AND  p.id_tipo_cuenta = "+filters.tipo_cuenta;
         if(filters && filters.numero_cuenta)
@@ -21,7 +21,7 @@ async function getDestinatarios(filters){
             where += " AND  p.id_banco = "+resultsBco[0].id_banco;
         }
 
-        let query = 'select p.id_persona, p.rut_persona, p.nombre_persona, p.telefono_persona,p.numero_cuenta, p.email_persona, '+
+        let query = 'select p.id_persona, p.rut_persona, UPPER(p.nombre_persona) nombre_persona, p.telefono_persona,p.numero_cuenta, UPPER(p.email_persona) email_persona, '+
         ' tc.id_cuenta, tc.nombre_cuenta as tipo_cuenta, b.code_banco, b.nombre_banco'+
         ' from persona p'+
         ' join tipo_cuenta tc on tc.id_cuenta = p.id_tipo_cuenta'+
@@ -43,9 +43,9 @@ async function getDestinatarios(filters){
 async function createDestinatario(rut, nombre, telefono, numero_cuenta, tipo_cuenta, email, code_banco, nombre_banco){
     const id_bco = await bancoService.createBanco(code_banco, nombre_banco);
     let query = 'INSERT INTO public.persona(rut_persona, nombre_persona, telefono_persona, numero_cuenta, id_tipo_cuenta, email_persona, id_banco)'+
-    'VALUES ('+rut+', \''+nombre+'\', \''+telefono+'\', \''+numero_cuenta+'\', '+tipo_cuenta+',\''+email+'\', '+id_bco+');';
+    'VALUES ('+rut+', \''+nombre.toUpperCase()+'\', \''+telefono+'\', \''+numero_cuenta+'\', '+tipo_cuenta+',\''+email.toUpperCase()+'\', '+id_bco+');';
     await db.query(query).catch( (error) => { throw(error) });
-    let search = await getDestinatarios({rut_persona:rut, tipo_cuenta: tipo_cuenta, code_banco: code_banco, nombre_banco: nombre_banco})
+    let search = await getDestinatarios({rut_persona:rut, tipo_cuenta: tipo_cuenta, code_banco: code_banco, nombre_banco: nombre_banco, numero_cuenta: numero_cuenta})
     return search;
 }
 

@@ -4,7 +4,6 @@ const transferenciaService = require('../services/transferenciaService');
 const ENDPOINT = require('../utils/constants').ENDPOINT_TRANSFERENCIA;
 
 const getTransferencias = router.get(ENDPOINT, async (req,res) => {
-    console.log(req.query);
     const filters=req.query;
     const result =  await  transferenciaService.getTransferencias()
                             .then( (result) => {res.status(200).json(result)})

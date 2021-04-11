@@ -3,7 +3,7 @@ const destinatarioService = require('../services/destinatarioService');
 async function getTransferencias(){
     let where = "WHERE 1=1 ";
     
-    let query = 'select p.rut_persona, p.nombre_persona,tp.nombre_cuenta,t.monto_transferencia,b.code_banco,b.nombre_banco '+
+    let query = 'select p.rut_persona, UPPER(p.nombre_persona) nombre_persona,tp.nombre_cuenta,t.monto_transferencia,b.code_banco,b.nombre_banco '+
                 ' from public.transferencia t'+
                 ' join public.persona p on t.id_persona = p.id_persona '+
                 ' join public.tipo_cuenta tp on tp.id_cuenta = p.id_tipo_cuenta ' +
